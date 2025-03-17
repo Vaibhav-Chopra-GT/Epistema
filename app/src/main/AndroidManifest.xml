@@ -30,6 +30,16 @@
         <activity
             android:name=".Activity3"
             android:exported="true" />
+        <activity
+            android:name=".Activity4"
+            android:exported="true"
+            />
+        <activity
+            android:name=".Activity5"
+            android:exported="true"
+            />
+
+
     </application>
 
 </manifest>
