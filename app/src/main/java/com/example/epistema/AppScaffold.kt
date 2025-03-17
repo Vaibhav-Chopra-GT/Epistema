@@ -4,11 +4,13 @@ import android.content.Intent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
 
 import androidx.compose.material3.*
@@ -22,7 +24,7 @@ fun AppScaffold(
     content: @Composable (PaddingValues) -> Unit
 ) {
     val context = LocalContext.current
-    val screens = listOf("Home", "Search", "Profile", "Location", "Saved","Settings")
+    val screens = listOf("Home", "History", "Read", "Location", "Saved","Settings")
 
     Scaffold(
         bottomBar = {
@@ -33,8 +35,8 @@ fun AppScaffold(
                             Icon(
                                 imageVector = when (index) {
                                     0 -> Icons.Filled.Home
-                                    1 -> Icons.Filled.Search
-                                    2-> Icons.Filled.Person
+                                    1 -> Icons.Filled.History
+                                    2-> Icons.Filled.Article
                                     3 -> Icons.Filled.Place
                                     4 -> Icons.Filled.Bookmark
                                     else-> Icons.Filled.Settings
