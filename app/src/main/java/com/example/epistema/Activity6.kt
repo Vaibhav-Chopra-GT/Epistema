@@ -16,7 +16,7 @@ class Activity6 : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             EpistemaTheme {
-                AppScaffold(selectedIndex = 2) { innerPadding ->
+                AppScaffold(selectedIndex = 7) { innerPadding ->
                     ArticleListScreen(modifier = Modifier.padding(innerPadding),"Science")
                 }
             }
