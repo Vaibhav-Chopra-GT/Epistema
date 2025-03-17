@@ -1,77 +1,42 @@
 package com.example.epistema
 
+import ArticleListScreen
+import SettingsScreen
 import android.os.Bundle
+
+import androidx.activity.compose.setContent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.epistema.ui.HomeScreen
-import com.example.epistema.ui.ProfileScreen
-import com.example.epistema.ui.SearchScreen
-import com.example.epistema.ui.theme.EpistemaTheme
+import androidx.navigation.compose.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import com.example.epistema.ui.ArticleDetailScreen
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            EpistemaTheme {
-                MainScreen()
-            }
+            MyApp()
         }
     }
 }
 
 @Composable
-fun MainScreen() {
-    var selectedItem by rememberSaveable { mutableStateOf(0) }
+fun MyApp() {
+    val navController = rememberNavController()
 
-    val screens = listOf("Home", "Search", "Profile")
-
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                screens.forEachIndexed { index, label ->
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                imageVector = when (index) {
-                                    0 -> Icons.Filled.Home
-                                    1 -> Icons.Filled.Search
-                                    else -> Icons.Filled.Person
-                                },
-                                contentDescription = label
-                            )
-                        },
-                        label = { Text(label) },
-                        selected = selectedItem == index,
-                        onClick = { selectedItem = index }
-                    )
-                }
-            }
+    NavHost(navController, startDestination = "articleList") {
+        composable("articleList") {
+            ArticleListScreen(navController, section = "Science")
         }
-    ) { innerPadding ->
-        when (selectedItem) {
-            0 -> HomeScreen(modifier = Modifier.padding(innerPadding))
-            1 -> SearchScreen(modifier = Modifier.padding(innerPadding))
-            2 -> ProfileScreen(modifier = Modifier.padding(innerPadding))
+        composable("articleDetail/{articleTitle}") { backStackEntry ->
+            val articleTitle = backStackEntry.arguments?.getString("articleTitle") ?: "Unknown"
+            ArticleDetailScreen(articleTitle, navController)
         }
-    }
-}
+        composable("settings") {
+            SettingsScreen()
+        }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewMainScreen() {
-    EpistemaTheme {
-        MainScreen()
     }
 }
