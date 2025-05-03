@@ -1,5 +1,6 @@
 package com.example.epistema.viewmodels
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.epistema.data.ParseResponse
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
+    private var _lastPageId = mutableStateOf(-1)
+    val lastPageId: Int get() = _lastPageId.value
     private val _searchResults = MutableStateFlow<List<WikiSearchResult>>(emptyList())
     private val _currentArticle = MutableStateFlow<WikiArticle?>(null)
     private val _isLoading = MutableStateFlow(false)
@@ -42,6 +45,7 @@ class SearchViewModel : ViewModel() {
     }
 
     fun loadArticleById(pageId: Int) {
+        _lastPageId.value = pageId;
         viewModelScope.launch {
             _isLoading.update { true }
             try {
@@ -86,6 +90,7 @@ class SearchViewModel : ViewModel() {
             }
         }
     }
+
 
     fun clearSearchResults() {
         _searchResults.update { emptyList() }
