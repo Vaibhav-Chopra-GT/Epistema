@@ -1,7 +1,6 @@
 package com.example.epistema.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,7 +15,7 @@ import com.example.epistema.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun HistoryScreen(modifier: Modifier = Modifier) {
     var searchQuery by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     // Filter options that resemble a YouTube filter bar

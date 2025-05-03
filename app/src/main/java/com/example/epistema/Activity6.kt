@@ -5,19 +5,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import com.example.epistema.ui.SavedArticlesScreen
-import com.example.epistema.ui.LocationsScreen
-
-import com.example.epistema.ui.theme.EpistemaTheme
 import androidx.compose.ui.Modifier
+import com.example.epistema.ui.theme.EpistemaTheme
 
 class Activity6 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val category = intent.getStringExtra("CATEGORY") ?: "Science"  // default fallback
         setContent {
             EpistemaTheme {
                 AppScaffold(selectedIndex = 7) { innerPadding ->
-                    ArticleListScreen(modifier = Modifier.padding(innerPadding),"Science")
+                    ArticleListScreen(modifier = Modifier.padding(innerPadding), category)
                 }
             }
         }

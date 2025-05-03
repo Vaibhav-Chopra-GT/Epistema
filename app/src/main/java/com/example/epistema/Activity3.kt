@@ -25,13 +25,15 @@ class Activity3 : ComponentActivity() {
                     if (pageId != -1) {
                         // Updated method name:
                         viewModel.loadArticleById(pageId)
+//                        viewModel.logHistory(pageId)
                     }
                 }
 
                 AppScaffold(selectedIndex = 2) { innerPadding ->
                     ProfileScreen(
                         modifier = Modifier.padding(innerPadding),
-                        viewModel = viewModel
+                        viewModel = viewModel,
+
                     )
                 }
             }

@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.epistema.data.ParseResponse
 import com.example.epistema.data.WikiArticle
+//import com.example.epistema.data.HistoryEntity
+//import com.example.epistema.data.HistoryDao
+//import com.example.epistema.data.HistoryEntry
 import com.example.epistema.data.WikiSearchResult
 import com.example.epistema.network.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -86,6 +89,7 @@ class SearchViewModel : ViewModel() {
             }
         }
     }
+
 
     fun clearSearchResults() {
         _searchResults.update { emptyList() }

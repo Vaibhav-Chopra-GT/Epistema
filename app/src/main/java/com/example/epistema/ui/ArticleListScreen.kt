@@ -37,12 +37,13 @@ fun ArticleListScreen(
     section: String,
     viewModel: WikipediaViewModel = viewModel()
 ) {
+    // Fetch articles when section changes
     LaunchedEffect(section) {
         viewModel.fetchArticles(section)
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(), // use passed-in modifier
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -57,24 +58,38 @@ fun ArticleListScreen(
             Text(
                 text = "Articles in $section",
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.weight(1f) // Allows text to take available space
+                modifier = Modifier.weight(1f)
             )
 
             Button(
-                onClick = {  },
+                onClick = { /* TODO: Add settings navigation */ },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 Text("Settings")
             }
         }
-
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(viewModel.articles) { article ->
-                ArticleItem(article)
+        if (viewModel.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(viewModel.articles) { article ->
+                    ArticleItem(article)
+                }
+            }
+
+            // your LazyColumn or content
         }
+
+//        LazyColumn(modifier = Modifier.fillMaxSize()) {
+//            items(viewModel.articles) { article ->
+//                ArticleItem(article)
+//            }
+//        }
     }
 }
+
 
 
 
@@ -89,14 +104,17 @@ fun ArticleItem(article: Article) {
             .fillMaxWidth()
             .padding(8.dp)
             .clickable {
-                context.startActivity(Intent(context, Activity3::class.java))
+                val intent = Intent(context, Activity3::class.java).apply {
+                    putExtra("PAGE_ID", article.pageId)
+                }
+                context.startActivity(intent)
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
             AsyncImage(
                 model = imageUrl,
-                contentDescription = "Science Image",
+                contentDescription = "Article Image",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(165.dp),
