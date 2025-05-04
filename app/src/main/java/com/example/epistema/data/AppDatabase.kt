@@ -5,24 +5,20 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [HistoryEntry::class], version = 1)
+@Database(entities = [SavedArticle::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun historyDao(): HistoryDao
+    abstract fun savedArticleDao(): SavedArticleDao
 
     companion object {
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
+        @Volatile private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
+        fun getInstance(context: Context): AppDatabase =
+            INSTANCE ?: synchronized(this) {
+                Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "epistema_db"
-                ).build()
-                INSTANCE = instance
-                instance
+                ).build().also { INSTANCE = it }
             }
-        }
     }
 }

@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.epistema.Activity3
 import com.example.epistema.Activity6
 import com.example.epistema.Article
+import com.example.epistema.EpistemaApp
 import com.example.epistema.ui.WikipediaViewModel
 
 @Composable
@@ -104,10 +105,12 @@ fun ArticleItem(article: Article) {
             .fillMaxWidth()
             .padding(8.dp)
             .clickable {
-                val intent = Intent(context, Activity3::class.java).apply {
-                    putExtra("PAGE_ID", article.pageId)
-                }
+                val app = context.applicationContext as EpistemaApp
+
+                app.globalStateViewModel.setCurrentPage(article.pageId)
+                val intent = Intent(context, Activity3::class.java)
                 context.startActivity(intent)
+
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {

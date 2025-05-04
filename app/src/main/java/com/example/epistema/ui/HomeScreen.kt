@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.epistema.Activity3
 import com.example.epistema.Activity6
+import com.example.epistema.EpistemaApp
 import com.example.epistema.R
 import com.example.epistema.data.WikiSearchResult
 import com.example.epistema.viewmodels.SearchViewModel
@@ -88,9 +89,10 @@ fun HomeScreen(
                 SearchResultsList(
                     results = searchResults,
                     onItemClick = { result ->
-                        val intent = Intent(context, Activity3::class.java).apply {
-                            putExtra("PAGE_ID", result.pageId)
-                        }
+                        val app = context.applicationContext as EpistemaApp
+
+                        app.globalStateViewModel.setCurrentPage(result.pageId)
+                        val intent = Intent(context, Activity3::class.java)
                         context.startActivity(intent)
                     }
                 )
@@ -204,9 +206,10 @@ private fun OriginalContent() {
                     .clickable(enabled = !isLoading) {
                         val saved = ArticleOfTheDayManager.getTodayArticle(context)
                         if (saved != null) {
-                            val intent = Intent(context, Activity3::class.java).apply {
-                                putExtra("PAGE_ID", saved.second)
-                            }
+                            val app = context.applicationContext as EpistemaApp
+
+                            app.globalStateViewModel.setCurrentPage(saved.second)
+                            val intent = Intent(context, Activity3::class.java)
                             context.startActivity(intent)
                         } else {
                             isLoading = true
@@ -216,9 +219,10 @@ private fun OriginalContent() {
                                 if (randomArticle != null) {
                                     ArticleOfTheDayManager.saveTodayArticle(context, randomArticle.first, randomArticle.second)
                                     withContext(Dispatchers.Main) {
-                                        val intent = Intent(context, Activity3::class.java).apply {
-                                            putExtra("PAGE_ID", randomArticle.second)
-                                        }
+                                        val app = context.applicationContext as EpistemaApp
+
+                                        app.globalStateViewModel.setCurrentPage(randomArticle.second)
+                                        val intent = Intent(context, Activity3::class.java)
                                         context.startActivity(intent)
                                         articleTitle = randomArticle.first
                                         isLoading = false
@@ -312,9 +316,10 @@ private fun OriginalContent() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    val intent = Intent(context, Activity3::class.java).apply {
-                                        putExtra("PAGE_ID", page.pageId)
-                                    }
+                                    val app = context.applicationContext as EpistemaApp
+
+                                    app.globalStateViewModel.setCurrentPage(page.pageId)
+                                    val intent = Intent(context, Activity3::class.java)
                                     context.startActivity(intent)
                                 }
                                 .padding(horizontal = 16.dp, vertical = 12.dp),
