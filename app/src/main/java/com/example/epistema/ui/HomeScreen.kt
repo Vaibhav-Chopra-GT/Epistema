@@ -54,10 +54,11 @@ import java.io.InputStreamReader
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    initialQuery: String = "",
     onStartVoiceRecognition: ((String) -> Unit) -> Unit
 ) {
     val viewModel: SearchViewModel = viewModel()
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by remember { mutableStateOf(initialQuery) }
     val context = LocalContext.current
     val isLoading by viewModel.isLoading.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()

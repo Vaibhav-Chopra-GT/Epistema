@@ -17,7 +17,7 @@ class Activity7 : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             EpistemaTheme {
-                AppScaffold(selectedIndex = 5) { innerPadding ->
+                AppScaffold(selectedIndex = 6) { innerPadding ->
                     SettingsScreen(modifier = Modifier.padding(innerPadding))
                 }
             }

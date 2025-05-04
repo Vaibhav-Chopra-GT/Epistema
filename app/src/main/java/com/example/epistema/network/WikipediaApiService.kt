@@ -3,11 +3,15 @@ package com.example.epistema.network
 import com.example.epistema.data.ParseResponse
 import com.example.epistema.data.SummaryResponse
 import com.example.epistema.data.WikiSearchResponse
+import com.example.epistema.data.GeoSearchResponse
+import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WikipediaApiService {
+
+    // Search articles by keyword
     @GET("w/api.php")
     suspend fun search(
         @Query("action") action: String,
@@ -46,4 +50,30 @@ interface WikipediaApiService {
     suspend fun getSummary(
         @Path("title") title: String
     ): SummaryResponse
+
+    // ✅ Get nearby articles using GPS coordinates
+    @GET("w/api.php")
+    suspend fun getNearbyArticles(
+        @Query("action") action: String = "query",
+        @Query("list") list: String = "geosearch",
+        @Query("gscoord") coord: String, // "latitude|longitude"
+        @Query("gsradius") radius: Int = 10000, // meters
+        @Query("gslimit") limit: Int = 10,
+        @Query("format") format: String = "json"
+    ): GeoSearchResponse
 }
+
+data class ParseResponse(
+    val parse: Parse
+)
+
+data class Parse(
+    val title: String,
+    val pageid: Int,
+    val text: TextContent
+)
+
+data class TextContent(
+    @SerializedName("*")
+    val html: String
+)

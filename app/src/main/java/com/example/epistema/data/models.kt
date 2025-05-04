@@ -16,9 +16,20 @@ data class WikiSearchResult(
 data class ParseResponse(val parse: Parse)
 data class Parse(val title: String, val text: Text)
 data class Text(
-    @SerializedName("*")
+    @field:SerializedName("*")
     val html: String
 )
+
+data class GeoArticle(
+    val pageid: Int,
+    val title: String,
+    val lat: Double,
+    val lon: Double,
+    val dist: Double,
+    val description: String? // Add this field to hold the article description
+)
+
+
 
 // --- unify into WikiArticle ---
 data class WikiArticle(
@@ -27,3 +38,6 @@ data class WikiArticle(
     val content: String,  // now full HTML from parse
     val url: String? = null
 )
+data class GeoSearchResponse(val query: GeoQuery)
+data class GeoQuery(val geosearch: List<GeoArticle>)
+
