@@ -1,8 +1,10 @@
 package com.example.epistema.network
 
 import com.example.epistema.data.ParseResponse
+import com.example.epistema.data.SummaryResponse
 import com.example.epistema.data.WikiSearchResponse
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WikipediaApiService {
@@ -32,4 +34,16 @@ interface WikipediaApiService {
         @Query("format") format: String = "json",
         @Query("prop") prop: String = "text"
     ): ParseResponse
+
+    @GET("w/api.php")
+    suspend fun parseArticleById(
+        @Query("action") action: String = "parse",
+        @Query("pageid") pageid: String,
+        @Query("format") format: String = "json"
+    ): ParseResponse
+
+    @GET("api/rest_v1/page/summary/{title}")
+    suspend fun getSummary(
+        @Path("title") title: String
+    ): SummaryResponse
 }

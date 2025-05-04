@@ -1,6 +1,7 @@
 package com.example.epistema.ui
 
-import androidx.compose.foundation.Image
+import android.content.Intent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,110 +10,143 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.epistema.R
+import coil.compose.AsyncImage
+import com.example.epistema.Activity3
+import com.example.epistema.network.RetrofitInstance
+import com.example.epistema.data.SummaryResponse
+import com.example.epistema.viewmodels.HistoryViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(modifier: Modifier = Modifier) {
-    var searchQuery by remember { mutableStateOf("") }
+fun HistoryScreen(
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
-    // Filter options that resemble a YouTube filter bar
-    val filterOptions = listOf(
-        "All",
-        "Viewed Last Week",
-        "Viewed Last Month",
-        "Trending",
-        "Most Viewed",
-        "Recently Added",
-        "A-Z",
-        "Z-A"
-    )
+    val filterOptions = listOf("Recent", "A-Z", "Z-A")
     var selectedFilter by remember { mutableStateOf(filterOptions.first()) }
 
-    // Sample list of visited Wikipedia articles with associated image resources
-    val visitedArticles = listOf(
-        "Article 1: The Renaissance" to R.drawable.img,
-        "Article 2: World War II" to R.drawable.img,
-        "Article 3: The Cold War" to R.drawable.img,
-        "Article 4: Space Exploration" to R.drawable.img
-    )
+    // ViewModel and state
+    val viewModel: HistoryViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    val historyList by viewModel.historyFlow.collectAsState()
 
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
-        // Search Bar
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Search articles") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Filter Dropdown similar to YouTube's filter bar
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedTextField(
-                value = selectedFilter,
-                onValueChange = { },
-                readOnly = true,
-                label = { Text("Filter") },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                },
-                modifier = Modifier.menuAnchor() // required modifier for ExposedDropdownMenuBox
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                filterOptions.forEach { filterOption ->
-                    DropdownMenuItem(
-                        text = { Text(filterOption) },
-                        onClick = {
-                            selectedFilter = filterOption
-                            expanded = false
-                        }
-                    )
-                }
-            }
+    // Apply filter/sort
+    val displayedList = remember(historyList, selectedFilter) {
+        when (selectedFilter) {
+            "A-Z" -> historyList.sortedBy { it.pageId } // or .sortedBy { it.title } if metadata stored
+            "Z-A" -> historyList.sortedByDescending { it.pageId }
+            else -> historyList
         }
+    }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // List of visited articles (you can add filtering logic based on searchQuery and selectedFilter)
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(visitedArticles) { (article, imageRes) ->
-                Card(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Clear history & filter row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(onClick = { viewModel.clearHistory(); }) {
+                Text("Clear History")
+            }
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    value = selectedFilter,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Sort") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                    modifier = Modifier.menuAnchor().width(120.dp)
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = imageRes),
-                            contentDescription = article,
-                            modifier = Modifier
-                                .size(100.dp)
-                                .padding(end = 16.dp)
-                        )
-                        Text(
-                            text = article,
-                            modifier = Modifier.weight(1f)
+                    filterOptions.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                selectedFilter = option
+                                expanded = false
+                            }
                         )
                     }
                 }
             }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // History list
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(displayedList) { entry ->
+                HistoryItemRow(
+                    pageId = entry.pageId,
+                    onClick = {
+                        val intent = Intent(context, Activity3::class.java)
+                        intent.putExtra("PAGE_ID", entry.pageId)
+                        context.startActivity(intent)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HistoryItemRow(
+    pageId: Int,
+    onClick: () -> Unit
+) {
+    // Fetch title & thumbnail dynamically
+    val summary by produceState<SummaryResponse?>(initialValue = null, key1 = pageId) {
+        value = withContext(Dispatchers.IO) {
+            val parseResp = RetrofitInstance.api.parseArticleById(
+                pageid = pageId.toString()
+            )
+            val title = parseResp.parse.title
+            RetrofitInstance.api.getSummary(title)
+        }
+    }
+
+    val displayTitle = summary?.title ?: "Loading..."
+    val imageUrl = summary?.thumbnail?.source
+
+    Card(
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = displayTitle,
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(end = 16.dp)
+            )
+            Text(
+                text = displayTitle,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }

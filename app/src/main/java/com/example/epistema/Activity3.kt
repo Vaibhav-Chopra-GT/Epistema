@@ -32,6 +32,7 @@ import com.example.epistema.ui.ProfileScreen
 import com.example.epistema.ui.theme.EpistemaTheme
 import com.example.epistema.viewmodels.SavedArticlesViewModel
 import com.example.epistema.viewmodels.GlobalStateViewModel
+import com.example.epistema.viewmodels.HistoryViewModel
 import com.example.epistema.viewmodels.SearchViewModel
 
 class Activity3 : ComponentActivity() {
@@ -39,6 +40,7 @@ class Activity3 : ComponentActivity() {
     private val globalStateVm by lazy { app.globalStateViewModel }
     private val searchVm: SearchViewModel by viewModels()
     private val savedArticlesVm: SavedArticlesViewModel by viewModels()
+    private val historyVm: HistoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +82,7 @@ class Activity3 : ComponentActivity() {
 
                         globalPageId != -1 -> {
                             searchVm.loadArticleById(globalPageId)
+                            historyVm.record(globalPageId)
                         }
                     }
                 }
