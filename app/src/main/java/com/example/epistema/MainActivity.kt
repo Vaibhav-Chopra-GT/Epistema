@@ -28,12 +28,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val initialQuery = intent.getStringExtra("initial_search") ?: ""
         setContent {
             EpistemaTheme {
                 AppScaffold(selectedIndex = 0) { innerPadding ->
                     HomeScreen(
                         modifier = Modifier.padding(innerPadding),
+                        initialQuery = initialQuery,
                         onStartVoiceRecognition = { callback ->
                             onVoiceResult = callback
                             startVoiceRecognition()

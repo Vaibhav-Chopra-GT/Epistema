@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
 
@@ -24,7 +25,7 @@ fun AppScaffold(
     content: @Composable (PaddingValues) -> Unit
 ) {
     val context = LocalContext.current
-    val screens = listOf("Home", "History", "Read", "Location", "Saved","Settings")
+    val screens = listOf("Home", "History", "Read", "Location", "Saved","Lens","Settings")
 
     Scaffold(
         bottomBar = {
@@ -39,6 +40,7 @@ fun AppScaffold(
                                     2-> Icons.Filled.Article
                                     3 -> Icons.Filled.Place
                                     4 -> Icons.Filled.Bookmark
+                                    5 -> Icons.Filled.Camera
                                     else-> Icons.Filled.Settings
                                 },
                                 contentDescription = label
@@ -54,7 +56,8 @@ fun AppScaffold(
                                     2 -> context.startActivity(Intent(context, Activity3::class.java))
                                     3 -> context.startActivity(Intent(context, Activity4::class.java))
                                     4 -> context.startActivity(Intent(context, Activity5::class.java))
-                                    5-> context.startActivity(Intent(context,  Activity7::class.java))
+                                    5-> context.startActivity(Intent(context,  Activity8::class.java))
+                                    6-> context.startActivity(Intent(context,  Activity7::class.java))
                                 }
                             }
                         }
