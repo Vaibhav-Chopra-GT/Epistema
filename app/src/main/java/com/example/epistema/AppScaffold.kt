@@ -46,7 +46,7 @@ fun AppScaffold(
                                 contentDescription = label
                             )
                         },
-                        label = { Text(label) },
+                        label = { },
                         selected = index == selectedIndex,
                         onClick = {
                             if (index != selectedIndex) {

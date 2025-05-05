@@ -1,6 +1,8 @@
 package com.example.epistema
 
+import EpistemaTheme
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
@@ -19,7 +21,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import com.example.epistema.ui.LocationsScreen
 import com.example.epistema.ui.ProfileScreen
-import com.example.epistema.ui.theme.EpistemaTheme
 import com.google.android.gms.location.LocationServices
 
 class Activity4 : ComponentActivity() {
@@ -37,14 +38,20 @@ class Activity4 : ComponentActivity() {
             Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
         }
     }
+    private val globalStateVm by lazy { (application as EpistemaApp).globalStateViewModel }
 
+
+    @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContent {
-            EpistemaTheme {
+            EpistemaTheme(
+                themeOverride = globalStateVm.appTheme.value,
+                fontSize = globalStateVm.fontSize.value
+            ) {
                 AppScaffold(selectedIndex = 3) { innerPadding ->
                     LocationsScreen(
                         modifier = Modifier.padding(innerPadding),

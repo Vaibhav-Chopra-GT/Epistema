@@ -1,5 +1,7 @@
 package com.example.epistema
 
+import EpistemaTheme
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.epistema.ui.ProfileScreen
-import com.example.epistema.ui.theme.EpistemaTheme
 import com.example.epistema.viewmodels.SavedArticlesViewModel
 import com.example.epistema.viewmodels.GlobalStateViewModel
 import com.example.epistema.viewmodels.HistoryViewModel
@@ -42,11 +43,15 @@ class Activity3 : ComponentActivity() {
     private val savedArticlesVm: SavedArticlesViewModel by viewModels()
     private val historyVm: HistoryViewModel by viewModels()
 
+    @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            EpistemaTheme {
+            EpistemaTheme(
+                themeOverride = globalStateVm.appTheme.value,
+                fontSize = globalStateVm.fontSize.value
+            ) {
                 val globalArticleId by globalStateVm.currentArticleId.collectAsState()
                 val globalPageId by globalStateVm.currentPageId.collectAsState()
 

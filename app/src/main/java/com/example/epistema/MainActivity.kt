@@ -1,17 +1,20 @@
 package com.example.epistema
 
+import EpistemaTheme
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.example.epistema.ui.HomeScreen
-import com.example.epistema.ui.theme.EpistemaTheme
 
 class MainActivity : ComponentActivity() {
     private var onVoiceResult: ((String) -> Unit)? = null
@@ -25,12 +28,20 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    private val globalStateVm by lazy { (application as EpistemaApp).globalStateViewModel }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val initialQuery = intent.getStringExtra("initial_search") ?: ""
+
         setContent {
-            EpistemaTheme {
+            EpistemaTheme (
+                themeOverride = globalStateVm.appTheme.value,
+                fontSize = globalStateVm.fontSize.value
+            ) {
                 AppScaffold(selectedIndex = 0) { innerPadding ->
                     HomeScreen(
                         modifier = Modifier.padding(innerPadding),

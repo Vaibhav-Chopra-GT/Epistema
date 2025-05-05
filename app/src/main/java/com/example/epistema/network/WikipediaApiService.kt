@@ -18,17 +18,8 @@ interface WikipediaApiService {
         @Query("format") format: String,
         @Query("list") list: String,
         @Query("srsearch") query: String,
-        @Query("srlimit") limit: Int
+        @Query("srlimit") limit: Int,
     ): WikiSearchResponse
-
-    // by pageid (existing)
-    @GET("w/api.php")
-    suspend fun parseArticleById(
-        @Query("action") action: String = "parse",
-        @Query("pageid") pageid: String,
-        @Query("format") format: String = "json",
-        @Query("prop") prop: String = "text"
-    ): ParseResponse
 
     // **new**: by page TITLE
     @GET("w/api.php")
@@ -36,14 +27,14 @@ interface WikipediaApiService {
         @Query("action") action: String = "parse",
         @Query("page") page: String,
         @Query("format") format: String = "json",
-        @Query("prop") prop: String = "text"
+        @Query("prop") prop: String = "text",
     ): ParseResponse
 
     @GET("w/api.php")
     suspend fun parseArticleById(
         @Query("action") action: String = "parse",
         @Query("pageid") pageid: String,
-        @Query("format") format: String = "json"
+        @Query("format") format: String = "json",
     ): ParseResponse
 
     @GET("api/rest_v1/page/summary/{title}")

@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel() : ViewModel() {
     private var _lastPageId = mutableStateOf(-1)
     val lastPageId: Int get() = _lastPageId.value
     private val _searchResults = MutableStateFlow<List<WikiSearchResult>>(emptyList())

@@ -1,5 +1,6 @@
 package com.example.epistema.ui
 
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -30,6 +31,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -61,6 +63,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import java.io.File
+import java.util.Locale
 import kotlin.math.roundToInt
 
 private const val TAG = "ProfileScreen"
@@ -211,6 +214,24 @@ fun ProfileScreen(
         }
     }
 
+    val context = LocalContext.current
+    val tts = remember {
+        TextToSpeech(context) { /* no-op for now */ }
+    }
+
+    LaunchedEffect(tts) {
+        if (tts.isLanguageAvailable(Locale.getDefault()) >= TextToSpeech.LANG_AVAILABLE) {
+            tts.language = Locale.getDefault()
+        }
+    }
+
+    DisposableEffect(tts) {
+        onDispose {
+            tts.stop()
+            tts.shutdown()
+        }
+    }
+
     Surface(modifier = modifier.fillMaxSize()) {
         if (!isOffline && isLoading) {
             Box(Modifier.fillMaxSize(), Alignment.Center) {
@@ -239,11 +260,20 @@ fun ProfileScreen(
                                 style = androidx.compose.material3.MaterialTheme.typography.headlineSmall.copy(
                                     fontWeight = FontWeight.Bold
                                 ),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.weight(1f)
                             )
                             IconButton(onClick = {
-                                if (!isOffline) Log.d(TAG, "TTS clicked for ‘$articleTitle’")
-                            }) {
+                                        if (!isOffline) {
+                                                val textToRead = Jsoup.parse(rawHtml).text()
+                                               tts.speak(
+                                                       textToRead,
+                                                      TextToSpeech.QUEUE_FLUSH,
+                                                       null,
+                                                         "articleReadAloud"
+                                                            )
+                                            }
+                                   }) {
                                 Icon(Icons.Default.VolumeUp, contentDescription = "Read Aloud")
                             }
                             IconButton(onClick = {
@@ -279,7 +309,9 @@ fun ProfileScreen(
                                         androidx.compose.material3.MaterialTheme.typography.titleSmall.copy(
                                             fontWeight = FontWeight.SemiBold
                                         ),
-                                    modifier = Modifier.padding(vertical = 4.dp)
+                                    modifier = Modifier.padding(vertical = 4.dp),
+                                    color = MaterialTheme.colorScheme.onBackground
+
                                 )
                             }
                             is ContentItem.Paragraph -> {
@@ -303,7 +335,9 @@ fun ProfileScreen(
                                                     start = start,
                                                     end = length
                                                 )
-                                            } else append(node.text())
+                                            } else append(
+                                                node.text()
+                                            )
                                             else -> append(node.outerHtml())
                                         }
                                     }
@@ -311,7 +345,9 @@ fun ProfileScreen(
                                 ClickableText(
                                     text = annotated,
                                     modifier = Modifier.padding(vertical = 4.dp),
-                                    style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                                    style    = MaterialTheme.typography.bodyMedium.copy(
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    ),
                                     onClick = { offset ->
                                         annotated.getStringAnnotations("URL", offset, offset)
                                             .firstOrNull()?.let { ann ->
@@ -346,7 +382,7 @@ fun ProfileScreen(
                                                 append(node.text())
                                                 addStyle(
                                                     SpanStyle(
-                                                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                                        color = MaterialTheme.colorScheme.onBackground,
                                                         textDecoration = TextDecoration.Underline
                                                     ), start, length
                                                 )
@@ -507,7 +543,7 @@ fun ProfileScreen(
                                                 Text(
                                                     text = cap,
                                                     style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
-                                                    color = Color.Gray,
+                                                    color = MaterialTheme.colorScheme.onBackground,
                                                     modifier = Modifier.padding(top = 2.dp)
                                                 )
                                             }
@@ -533,7 +569,8 @@ fun ProfileScreen(
                                                     modifier = Modifier
                                                         .width(columnWidth)
                                                         .padding(8.dp),
-                                                    fontWeight = FontWeight.Bold
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = MaterialTheme.colorScheme.onBackground
                                                 )
                                                 if (i < item.headers.lastIndex) {
                                                     Spacer(
@@ -576,7 +613,8 @@ fun ProfileScreen(
                                                         } else {
                                                             Text(
                                                                 text = cellEl.text(),
-                                                                style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+                                                                style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                                                                color = MaterialTheme.colorScheme.onBackground
                                                             )
                                                         }
                                                     }
@@ -616,7 +654,9 @@ fun ProfileScreen(
                                 "Contents",
                                 style = androidx.compose.material3.MaterialTheme.typography.titleSmall.copy(
                                     fontWeight = FontWeight.Bold
-                                )
+                                ),
+                                color = MaterialTheme.colorScheme.onBackground
+
                             )
                             Spacer(Modifier.height(8.dp))
                             tocEntries.forEach { (idx, title) ->

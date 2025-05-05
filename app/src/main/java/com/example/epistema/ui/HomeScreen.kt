@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 
 import org.json.JSONObject
 import com.example.epistema.TrendingPage
+import com.example.epistema.localization.StringResources
 import java.net.HttpURLConnection
 import java.net.URL
 import java.io.BufferedReader
@@ -184,6 +185,8 @@ private fun OriginalContent() {
         "Art", "History", "Geography", "Science",
         "Politics", "Mathematics", "Literature", "Philosophy"
     )
+    val localizedCategories = remember { StringResources.getCategories() }
+
 
     LazyColumn(
         modifier = Modifier
@@ -241,7 +244,8 @@ private fun OriginalContent() {
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Text(
-                        text = "Article of the day - $articleTitle" ?: if (isLoading) "Loading..." else "Article of the day",
+                        text = (StringResources.getString("article_of_the_day") + " - $articleTitle")
+                            ?: if (isLoading) "Loading..." else StringResources.getString("article_of_the_day"),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -257,15 +261,18 @@ private fun OriginalContent() {
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                val leftCategory = categories[index * 2]
-                val rightCategory = categories[index * 2 + 1]
+                val leftCategory = localizedCategories[index * 2]
+                val leftCategory1 = categories[index * 2]
+
+                val rightCategory = localizedCategories[index * 2 + 1]
+                val rightCategory1 = categories[index * 2 + 1]
 
                 CategoryCard(
                     category = leftCategory,
                     modifier = Modifier.weight(1f),
                     onClick = {
                         val intent = Intent(context, Activity6::class.java)
-                        intent.putExtra("CATEGORY", leftCategory)
+                        intent.putExtra("CATEGORY", leftCategory1)
                         context.startActivity(intent)
                     }
                 )
@@ -274,7 +281,7 @@ private fun OriginalContent() {
                     modifier = Modifier.weight(1f),
                     onClick = {
                         val intent = Intent(context, Activity6::class.java)
-                        intent.putExtra("CATEGORY", rightCategory)
+                        intent.putExtra("CATEGORY", rightCategory1)
                         context.startActivity(intent)
                     }
                 )
