@@ -4,10 +4,10 @@ Epistema is an advanced Wikipedia reader app developed as a Mobile Computing cou
 
 ## 👥 Team Members
 
-- **Paarth Goyal** (Roll No: 2022343)  
-- **Tejus Madan** (Roll No: 2022540)  
-- **Utkarsh Dhilliwal** (Roll No: 2022551)  
-- **Vaibhav Chopra** (Roll No: 2022552)
+- **Paarth Goyal**  
+- **Tejus Madan** 
+- **Utkarsh Dhilliwal**
+- **Vaibhav Chopra** 
 
 ---
 
@@ -93,16 +93,3 @@ Ensure emulator has Play Store support for voice features
 
 For image recognition, testing on a real device is recommended due to camera integration
 
-📂 Project Structure (Highlights)
-bash
-Copy
-Edit
-app/
-├── activities/         # Each screen is an Activity (Home, Search, ReadArticle, Settings)
-├── adapters/           # RecyclerView & list adapters
-├── api/                # Retrofit interfaces and models
-├── db/                 # Room entities and DAOs for offline storage
-├── tflite/             # Image recognition model (resnet50.tflite)
-├── ui/                 # Jetpack Compose UI components
-├── utils/              # Helper classes, TTS, Location, Theme Utils
-└── resources/          # Drawable, layouts, strings, themes
